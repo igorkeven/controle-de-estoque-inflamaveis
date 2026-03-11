@@ -47,3 +47,14 @@ O banco SQLite fica em:
 Se voce editar o React/Tailwind, rode:
 - `atualizar_frontend.bat`
 
+## Executavel .exe (interface igual web)
+Se quiser rodar como aplicativo desktop no Windows, sem instalacao formal:
+
+1. Rode `gerar_exe_windows.bat`
+2. O executavel sera gerado em:
+   - `dist\\ControleEstoqueInflamaveis\\ControleEstoqueInflamaveis.exe`
+
+Observacoes:
+- O banco local SQLite fica na pasta `data` ao lado do `.exe`.
+- A interface do `.exe` e a mesma do sistema web.
+- Nao precisa instalar servidor/Docker na maquina final.

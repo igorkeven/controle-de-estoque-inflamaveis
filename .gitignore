@@ -1,8 +1,11 @@
 .venv/
 backend/.venv/
+.venv_exe/
 __pycache__/
 *.pyc
 backend/data/*.db
 frontend/node_modules/
 frontend/dist/
+build/
+dist/
 .~lock.*

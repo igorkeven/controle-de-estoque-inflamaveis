@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from datetime import date
 from enum import Enum
+import os
 from pathlib import Path
 from typing import Optional
 
@@ -14,10 +15,13 @@ from sqlalchemy import Date, Float, ForeignKey, String, case, create_engine, fun
 from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column, relationship, sessionmaker
 
 BASE_DIR = Path(__file__).resolve().parents[1]
-DATA_DIR = BASE_DIR / "data"
+PROJECT_ROOT = BASE_DIR.parent
+DATA_DIR = Path(os.getenv("ESTOQUE_DATA_DIR", str(BASE_DIR / "data"))).resolve()
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 DATABASE_URL = f"sqlite:///{(DATA_DIR / 'estoque.db').as_posix()}"
-FRONTEND_DIST = BASE_DIR.parent / "frontend" / "dist"
+FRONTEND_DIST = Path(
+    os.getenv("ESTOQUE_FRONTEND_DIST", str(PROJECT_ROOT / "frontend" / "dist"))
+).resolve()
 
 engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
