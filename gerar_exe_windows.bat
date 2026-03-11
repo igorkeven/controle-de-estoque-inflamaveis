@@ -3,8 +3,10 @@ setlocal
 cd /d "%~dp0"
 
 echo ===============================================
-echo Geracao do EXE - Controle de Estoque
+echo Geracao do EXE - WEG Controle de Estoque
+echo ===============================================
 set VENV=.venv_exe
+set APP_NAME=WEGControleInflamaveis
 
 echo [1/4] Criando ambiente virtual...
 if not exist %VENV%\Scripts\python.exe (
@@ -21,14 +23,16 @@ call npm install
 call npm run build
 cd ..
 
-echo [4/4] Gerando EXE...
-%VENV%\Scripts\pyinstaller --noconfirm --clean --windowed --name ControleEstoqueInflamaveis ^
+echo [4/4] Gerando EXE WEG...
+%VENV%\Scripts\pyinstaller --noconfirm --clean --windowed --name %APP_NAME% ^
+  --icon "desktop\assets\weg.ico" ^
+  --version-file "desktop\version_info_weg.txt" ^
   --paths backend ^
   --add-data "frontend\dist;frontend\dist" ^
   --add-data "backend\app;app" ^
   desktop\launcher.py
 
 echo.
-echo EXE pronto em: dist\ControleEstoqueInflamaveis\ControleEstoqueInflamaveis.exe
+echo EXE pronto em: dist\%APP_NAME%\%APP_NAME%.exe
 pause
 endlocal

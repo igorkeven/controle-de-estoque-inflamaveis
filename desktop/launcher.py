@@ -77,7 +77,7 @@ def main() -> None:
         import webview  # pywebview
 
         webview.create_window(
-            "Controle de Estoque - Inflamaveis",
+            "WEG - Controle de Estoque de Inflamaveis",
             url=url,
             min_size=(1100, 700),
             text_select=True,

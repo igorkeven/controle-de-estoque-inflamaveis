@@ -52,9 +52,10 @@ Se quiser rodar como aplicativo desktop no Windows, sem instalacao formal:
 
 1. Rode `gerar_exe_windows.bat`
 2. O executavel sera gerado em:
-   - `dist\\ControleEstoqueInflamaveis\\ControleEstoqueInflamaveis.exe`
+   - `dist\\WEGControleInflamaveis\\WEGControleInflamaveis.exe`
 
 Observacoes:
 - O banco local SQLite fica na pasta `data` ao lado do `.exe`.
 - A interface do `.exe` e a mesma do sistema web.
 - Nao precisa instalar servidor/Docker na maquina final.
+- O executavel sai sem console, com nome e metadados WEG.
