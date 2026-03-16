@@ -7,8 +7,11 @@ import threading
 import time
 import webbrowser
 from pathlib import Path
+from tkinter import Tk, messagebox
 
 import uvicorn
+
+from runtime_lock import RuntimeLock, RuntimeLockError
 
 
 def _project_root() -> Path:
@@ -29,9 +32,9 @@ def _runtime_paths() -> tuple[Path, Path]:
 
 def _find_port(start: int = 8000, end: int = 8050) -> int:
     for port in range(start, end + 1):
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-            if s.connect_ex(("127.0.0.1", port)) != 0:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            if sock.connect_ex(("127.0.0.1", port)) != 0:
                 return port
     raise RuntimeError("Nenhuma porta livre encontrada entre 8000 e 8050")
 
@@ -39,6 +42,25 @@ def _find_port(start: int = 8000, end: int = 8050) -> int:
 def main() -> None:
     frontend_dist, data_dir = _runtime_paths()
     data_dir.mkdir(parents=True, exist_ok=True)
+    runtime_lock = RuntimeLock(data_dir, "weg_controle_desktop")
+
+    try:
+        runtime_lock.acquire()
+    except RuntimeLockError as exc:
+        root = Tk()
+        root.withdraw()
+        info = exc.info
+        machine = info.get("machine", "outra maquina")
+        started_at = info.get("started_at", "horario desconhecido")
+        user = info.get("user", "")
+        owner_text = machine if not user else f"{machine} ({user})"
+        messagebox.showwarning(
+            "Sistema em uso",
+            f"O sistema ja esta aberto em {owner_text} desde {started_at}.\n\n"
+            "Feche a outra instancia antes de abrir novamente.",
+        )
+        root.destroy()
+        return
 
     os.environ["ESTOQUE_FRONTEND_DIST"] = str(frontend_dist)
     os.environ["ESTOQUE_DATA_DIR"] = str(data_dir)
@@ -58,15 +80,15 @@ def main() -> None:
             port=port,
             log_level="warning",
             access_log=False,
+            log_config=None,
         )
     )
 
-    t = threading.Thread(target=server.run, daemon=True)
-    t.start()
+    thread = threading.Thread(target=server.run, daemon=True)
+    thread.start()
 
     url = f"http://127.0.0.1:{port}"
 
-    # Espera a API subir
     for _ in range(60):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
             if sock.connect_ex(("127.0.0.1", port)) == 0:
@@ -74,7 +96,7 @@ def main() -> None:
         time.sleep(0.1)
 
     try:
-        import webview  # pywebview
+        import webview
 
         webview.create_window(
             "WEG - Controle de Estoque de Inflamaveis",
@@ -84,12 +106,12 @@ def main() -> None:
         )
         webview.start()
     except Exception:
-        # Fallback para navegador padrão se webview indisponível
         webbrowser.open(url)
-        while t.is_alive():
+        while thread.is_alive():
             time.sleep(0.5)
-
-    server.should_exit = True
+    finally:
+        server.should_exit = True
+        runtime_lock.release()
 
 
 if __name__ == "__main__":
