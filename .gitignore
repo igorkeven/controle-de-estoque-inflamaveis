@@ -4,8 +4,11 @@ backend/.venv/
 __pycache__/
 *.pyc
 backend/data/*.db
+entrega-web/**/*.db
+entrega-web/**/*.lock
 frontend/node_modules/
 frontend/dist/
 build/
 dist/
 .~lock.*
+*.zip

@@ -1,0 +1,16 @@
+WEG Controle de Estoque de Inflamaveis - Pacote WEB
+
+Como usar:
+1. Extraia este ZIP em uma pasta local da maquina que vai servir o sistema.
+2. Execute "WEGControleInflamaveisServidor.exe".
+3. Mantenha a janela aberta.
+4. Acesse pela propria maquina ou pelas outras maquinas da rede usando o endereco mostrado na tela.
+
+Observacoes importantes:
+- Nao mova o .exe para fora desta pasta.
+- A pasta "_internal" e obrigatoria.
+- A pasta "data" guarda o banco do sistema.
+- Se quiser entregar base vazia, apague "data\estoque.db" antes de zipar.
+- As outras maquinas precisam apenas de navegador.
+- O servidor nao deixa abrir mais de uma instancia ao mesmo tempo.
+- Se houver queda brusca e aparecer trava indevida, apague o arquivo "data\weg_controle_web.lock".
